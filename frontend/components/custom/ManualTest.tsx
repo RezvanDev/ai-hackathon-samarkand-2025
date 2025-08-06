@@ -26,12 +26,12 @@ const ManualTest: React.FC = () => {
     return (
         <div className="w-full">
             <div className="max-w-[800px]">
-                <div className="relative flex gap-10 bg-[#F0F2F5] p-1 rounded-4xl w-full">
+                <div className="relative flex gap-10 items-center bg-[#F0F2F5] p-1 rounded-4xl w-full">
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
                             onClick={() => handleSlideChange(index)}
-                            className={`relative z-10 px-6 py-1 cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
+                            className={`relative z-10 px-6 py-1.5  flex items-center justify-center cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
                                 }`}
                         >
                             {activeTab === index && (
@@ -94,11 +94,15 @@ const ManualTest: React.FC = () => {
         </div>
     );
 };
-
 const TestInput = ({ label }: { label: string }) => (
-    <div className="grid w-full max-w-sm items-center gap-1">
-        <Label className="font-medium">{label}</Label>
-        <Input type="text" placeholder="Введите значение" className="py-4 px-3" />
+    <div className="flex flex-col gap-1">
+        <Label className="font-medium text-[#0A395E] text-sm">{label}</Label>
+        <Input
+            type="text"
+            
+            placeholder="Введите значение"
+            className="py-5 px-4 rounded-lg border  border-gray-300 focus:outline-none focus:ring-0 focus:border-transparent focus-visible:ring-0 focus-visible:outline-none placeholder:text-gray-400"
+        />
     </div>
 );
 
