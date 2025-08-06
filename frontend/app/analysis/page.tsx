@@ -6,7 +6,7 @@ interface Props {
 
 const Analysis: React.FC<Props> = () => {
     return (
-        <div className="">
+        <div className="px-6 py-4">
 
             <ManualTest/>
 
