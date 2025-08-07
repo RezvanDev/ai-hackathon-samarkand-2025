@@ -65,7 +65,7 @@ export default function AIChatWidget() {
       
       {/* Modal Chat Window */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-80 h-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
+        <div className="fixed bottom-6 right-6 z-50 w-[400px] h-[450px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
