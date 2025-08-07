@@ -88,11 +88,12 @@ const FileTest: React.FC<FileTestProps> = ({ onAnalysisResult }) => {
 
   return (
     <>
+      <h1 className="text-3xl font-extrabold text-blue-900 leading-tight drop-shadow-md mb-4 mt-15">Загрузите файл с анализами для анализа AI 🧪</h1>
       <div
         ref={dropRef}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className="w-full border border-dashed border-gray-300 rounded-xl p-10 text-center mx-auto relative"
+        className="w-full border border-dashed border-gray-300 rounded-xl p-20 text-center mx-auto relative"
       >
         {isLoading && (
           <div className="h-full w-full bg-white/80 absolute top-0 left-0 flex justify-center items-center z-10">

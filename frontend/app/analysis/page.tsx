@@ -3,6 +3,7 @@
 import ManualTest from "@/components/custom/ManualTest";
 import { RobotAnimate } from "@/components/custom/RobotAnimate";
 import BackgorundAnimation from "@/components/custom/BackgroundAnimation";
+import FileTest from "@/components/custom/FileTest";
 
 interface Props { }
 
@@ -54,6 +55,8 @@ const Analysis: React.FC<Props> = () => {
  */}                    </div>
                 </div>
             </section>
+
+            <FileTest/>
         </div>
     );
 };
