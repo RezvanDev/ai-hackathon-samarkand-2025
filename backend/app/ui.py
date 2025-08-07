@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, current_app, flash, jsonify
-from .claude_client import get_medical_analysis_from_text
+from .claude_client import get_medical_analysis_from_text, get_general_assistant_response
 from .file_parser import parse_attachment
 from .database import get_all_medical_data, insert_medical_data, get_medical_data_count, get_analysis_by_patient
 import json
@@ -109,5 +109,20 @@ def api_upload():
 
         return jsonify(medical_analysis_dict)
 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@bp.route('/api/assistant', methods=['POST'])
+def api_assistant():
+    """API endpoint for general AI assistant."""
+    try:
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({'error': 'No text provided'}), 400
+        text = data['text']
+        assistant_response = get_general_assistant_response(text)
+        if 'error' in assistant_response:
+            return jsonify({'error': assistant_response['error']}), 500
+        return jsonify({'answer': assistant_response['answer']})
     except Exception as e:
         return jsonify({'error': str(e)}), 500

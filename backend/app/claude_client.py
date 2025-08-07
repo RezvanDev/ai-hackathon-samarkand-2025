@@ -4,6 +4,7 @@ import json
 from typing import cast
 import re
 
+
 def get_medical_analysis_from_text(text: str) -> dict:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -71,9 +72,9 @@ def get_medical_analysis_from_text(text: str) -> dict:
 
     try:
         message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-5-sonnet-20240620",
             max_tokens=4096,
-            tools=[tool_definition],
+            tools=[tool_definition],  # type: ignore
             tool_choice={"type": "tool", "name": "extract_medical_data"},
             messages=[
                 {
@@ -184,19 +185,13 @@ def get_medical_analysis_from_text(text: str) -> dict:
             ]
         )
 
-        if message.content and len(message.content) > 0:
-            for block in message.content:
-                if hasattr(block, 'type') and block.type == 'tool_use':
-                    return cast(dict, block.input)
-
-        text_response = ""
-        if message.content and len(message.content) > 0:
-            for block in message.content:
-                if hasattr(block, 'type') and block.type == 'text':
-                    text_response = block.text
-                    break
-        
-        return {"error": "The model did not return structured data.", "response": text_response}
+        tool_use = next((block for block in message.content if block.type == 'tool_use'), None)
+        if tool_use:
+            return cast(dict, tool_use.input)
+        else:
+            text_response = next((block.text for block in message.content if block.type == 'text'),
+                                 "No structured data extracted.")
+            return {"error": "The model did not return structured data.", "response": text_response}
 
     except Exception as e:
         return {"error": str(e)}
@@ -205,7 +200,6 @@ def get_medical_analysis_from_text(text: str) -> dict:
 def preprocess_medical_text(text: str) -> str:
     if not text:
         return ""
-
     text = re.sub(r'\s+', ' ', text.strip())
     medical_patterns = [
         r'(\w+)\s*[:=]\s*([\d.,]+)\s*([а-яёa-z/%]+)?',
@@ -226,7 +220,6 @@ def preprocess_medical_text(text: str) -> str:
             if re.search(pattern, line, re.IGNORECASE):
                 is_medical = True
                 break
-
         if is_medical or any(keyword in line.lower() for keyword in [
             'гемоглобин', 'лейкоциты', 'эритроциты', 'тромбоциты', 'глюкоза',
             'холестерин', 'креатинин', 'мочевина', 'алт', 'аст', 'билирубин',
@@ -239,3 +232,36 @@ def preprocess_medical_text(text: str) -> str:
                 processed_lines.append(line)
 
     return '\n'.join(processed_lines)
+
+
+def get_general_assistant_response(text: str) -> dict:
+    """
+    Ассистент-врач: всегда отвечает как опытный врач, не придумывает анализы, если их не было в вопросе.
+    """
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {"error": "ANTHROPIC_API_KEY environment variable not set."}
+    client = anthropic.Anthropic(api_key=api_key)
+    try:
+        message = client.messages.create(
+            model="claude-3-5-sonnet-20240620",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        "Ты — опытный врач с 20-летним стажем. Всегда отвечай как врач, используй профессиональные знания, но объясняй простым языком. "
+                        "Если вопрос не содержит медицинских анализов, не придумывай их, а просто поддержи беседу, дай совет или объясни что-то по медицине. "
+                        "Если вопрос не по медицине — отвечай как врач, но дружелюбно и понятно.\n\n"
+                        f"Вопрос пользователя: {text}"
+                    ),
+                }
+            ],
+        )
+        if isinstance(message.content, list):
+            answer = "".join(block.text for block in message.content if hasattr(block, "text"))
+        else:
+            answer = str(message.content)
+        return {"answer": answer}
+    except Exception as e:
+        return {"error": str(e)}
