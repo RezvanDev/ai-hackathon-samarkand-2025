@@ -26,12 +26,12 @@ const ManualTest: React.FC = () => {
     return (
         <div className="w-full">
             <div className="max-w-[800px]">
-                <div className="relative flex gap-10 items-center bg-[#F0F2F5] p-1 rounded-4xl w-full">
+                <div className="relative flex gap-10 items-center justify-around bg-[#F0F2F5] p-1 rounded-4xl w-full">
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
                             onClick={() => handleSlideChange(index)}
-                            className={`relative z-10 px-6 py-1.5  flex items-center justify-center cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
+                            className={`relative z-10 px-6 pt-2 pb-1.5  flex items-center  cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
                                 }`}
                         >
                             {activeTab === index && (
