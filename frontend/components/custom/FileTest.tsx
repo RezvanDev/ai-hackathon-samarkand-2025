@@ -14,7 +14,12 @@ const FileTest: React.FC<FileTestProps> = ({ onAnalysisResult }) => {
   const dropRef = useRef<HTMLDivElement>(null);
 
   const handleFile = (file: File) => {
-    if (file && file.type.match(/application\/(pdf|msword|vnd.openxmlformats-officedocument.wordprocessingml.document|text)/)) {
+    if (
+      file && (
+        file.type.match(/application\/(pdf|msword|vnd.openxmlformats-officedocument.wordprocessingml.document|text)/) ||
+        file.type.match(/image\/(jpeg|jpg|png|bmp|tiff)/)
+      )
+    ) {
       setSelectedFile(file);
     } else {
       alert("Формат файла не поддерживается");
@@ -88,12 +93,11 @@ const FileTest: React.FC<FileTestProps> = ({ onAnalysisResult }) => {
 
   return (
     <>
-      <h1 className="text-3xl font-extrabold text-blue-900 leading-tight drop-shadow-md mb-4 mt-15">Загрузите файл с анализами для анализа AI 🧪</h1>
       <div
         ref={dropRef}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className="w-full border border-dashed border-gray-300 rounded-xl p-20 text-center mx-auto relative"
+        className="w-full border border-dashed border-gray-300 rounded-xl p-10 text-center mx-auto relative"
       >
         {isLoading && (
           <div className="h-full w-full bg-white/80 absolute top-0 left-0 flex justify-center items-center z-10">
@@ -120,7 +124,7 @@ const FileTest: React.FC<FileTestProps> = ({ onAnalysisResult }) => {
         <input
           id="document-upload"
           type="file"
-          accept=".pdf,.doc,.docx,.txt"
+          accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.bmp,.tiff,image/jpeg,image/png,image/bmp,image/tiff"
           onChange={handleInputChange}
           className="hidden"
         />

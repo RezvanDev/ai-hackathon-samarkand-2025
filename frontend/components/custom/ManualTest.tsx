@@ -22,7 +22,7 @@ const ManualTest: React.FC = () => {
   const handleSlideChange = (index: number) => {
     setActiveTab(index);
     swiperRef.current?.slideTo(index);
-  };
+  }; 
   return (
     <div className="w-full">
       <div className="max-w-[800px]">
