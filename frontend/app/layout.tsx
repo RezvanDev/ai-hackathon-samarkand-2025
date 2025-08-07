@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/custom/app-sidebar";
 import Header from "@/components/custom/Header";
 import Footer from "@/components/custom/Footer";
+import AIChatWidget from "@/components/custom/AIChatWidget";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,6 +25,8 @@ export default function RootLayout({
             <Header />
             {children}
             <Footer />
+            <AIChatWidget />
+
           </main>
         </SidebarProvider>
       </body>
