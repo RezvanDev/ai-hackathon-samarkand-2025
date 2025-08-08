@@ -55,7 +55,7 @@ const FileTest: React.FC<FileTestProps> = ({ onAnalysisResult }) => {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:5001/api/upload", {
+      const response = await fetch("https://e946a3a99226.ngrok-free.app/api/upload", {
         method: "POST",
         body: formData,
       });
