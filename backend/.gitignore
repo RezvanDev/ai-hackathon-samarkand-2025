@@ -1,2 +1,47 @@
-backend/.env
+# Python bytecode and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+
+# Environment files
 .env
+.env.*
+!.env.example
+
+# Caches and test artifacts
+.pytest_cache/
+.mypy_cache/
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Flask/instance config
+instance/
+
+# Databases and local data
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads and generated files
+uploads/**
+!uploads/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# OS/IDE
+.DS_Store
+.idea/
+.vscode/
