@@ -14,15 +14,16 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { MdAnalytics } from "react-icons/md";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
-import { 
-  Home, 
-  BarChart3, 
-  Settings, 
-  LogOut, 
+import {
+  Home,
+  BarChart3,
+  Settings,
+  LogOut,
   Sparkles,
   Activity,
   Heart,
-  User
+  User,
+  Scan
 } from "lucide-react";
 
 export function AppSidebar() {
@@ -40,6 +41,12 @@ export function AppSidebar() {
       icon: <BarChart3 className="w-5 h-5" />,
       label: "Анализы",
       description: "Загрузка и анализ"
+    },
+    {
+      href: "/imaging",
+      icon: <Scan className="w-5 h-5" />,
+      label: "Снимки",
+      description: "МРТ/КТ/МСКТ"
     },
     {
       href: "/profile",
@@ -91,29 +98,26 @@ export function AppSidebar() {
               Навигация
             </h3>
           </div>
-          
+
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link key={item.href} href={item.href}>
-                <div className={`group relative p-3 rounded-xl transition-all duration-200 cursor-pointer mb-2 ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
+                <div className={`group relative p-3 rounded-xl transition-all duration-200 cursor-pointer mb-2 ${isActive
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
                     : 'hover:bg-white hover:shadow-md border border-transparent hover:border-gray-200'
-                }`}>
+                  }`}>
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-white/20' 
+                    <div className={`p-2 rounded-lg transition-all duration-200 ${isActive
+                        ? 'bg-white/20'
                         : 'bg-gray-100 group-hover:bg-blue-100'
-                    }`}>
+                      }`}>
                       {item.icon}
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold text-sm">{item.label}</div>
-                      <div className={`text-xs ${
-                        isActive ? 'text-blue-100' : 'text-gray-500'
-                      }`}>
+                      <div className={`text-xs ${isActive ? 'text-blue-100' : 'text-gray-500'
+                        }`}>
                         {item.description}
                       </div>
                     </div>
@@ -147,39 +151,36 @@ export function AppSidebar() {
       </SidebarContent>
 
       <hr className="my-6 border-gray-200" />
-      
+
       <SidebarFooter className="space-y-2">
         <div className="mb-4">
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
             Аккаунт
           </h3>
         </div>
-        
+
         {footerItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href}>
-              <div className={`group relative p-3 rounded-xl transition-all duration-200 cursor-pointer ${
-                item.isLogout 
-                  ? 'hover:bg-red-50 border border-transparent hover:border-red-200' 
-                  : isActive 
-                    ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-lg' 
+              <div className={`group relative p-3 rounded-xl transition-all duration-200 cursor-pointer ${item.isLogout
+                  ? 'hover:bg-red-50 border border-transparent hover:border-red-200'
+                  : isActive
+                    ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-lg'
                     : 'hover:bg-white hover:shadow-md border border-transparent hover:border-gray-200'
-              }`}>
+                }`}>
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg transition-all duration-200 ${
-                    item.isLogout 
-                      ? 'bg-red-100 group-hover:bg-red-200' 
-                      : isActive 
-                        ? 'bg-white/20' 
+                  <div className={`p-2 rounded-lg transition-all duration-200 ${item.isLogout
+                      ? 'bg-red-100 group-hover:bg-red-200'
+                      : isActive
+                        ? 'bg-white/20'
                         : 'bg-gray-100 group-hover:bg-gray-200'
-                  }`}>
+                    }`}>
                     {item.icon}
                   </div>
                   <div className="flex-1">
-                    <div className={`font-semibold text-sm ${
-                      item.isLogout ? 'text-red-600' : ''
-                    }`}>
+                    <div className={`font-semibold text-sm ${item.isLogout ? 'text-red-600' : ''
+                      }`}>
                       {item.label}
                     </div>
                     <div className="text-xs text-gray-500">
