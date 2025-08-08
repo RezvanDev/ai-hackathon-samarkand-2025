@@ -31,7 +31,7 @@ const ManualTest: React.FC = () => {
             <button
               key={index}
               onClick={() => handleSlideChange(index)}
-              className={`relative z-10 px-6 py-1.5  flex items-center justify-between cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
+              className={`relative z-10 px-2  py-2 leading-3.5  flex items-center justify-between cursor-pointer text-sm font-semibold rounded-3xl transition-all ${activeTab === index ? "text-black" : "text-gray-400"
                 }`}
             >
               {activeTab === index && (
