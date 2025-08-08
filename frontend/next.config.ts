@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:5001/api/:path*', // URL вашего Flask-бэка
+        destination: 'https://261277fe2311.ngrok-free.app/api/:path*', // URL вашего Flask-бэка
       },
     ];
   },
