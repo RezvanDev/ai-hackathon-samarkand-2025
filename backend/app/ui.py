@@ -1,12 +1,15 @@
 from flask import Blueprint, request, render_template, current_app, flash, jsonify
-from .claude_client import get_medical_analysis_from_text, get_general_assistant_response
+from .claude_client import get_medical_analysis_from_text, get_general_assistant_response, analyze_medical_image
 from .file_parser import parse_attachment
 from .database import get_all_medical_data, insert_medical_data, get_medical_data_count, get_analysis_by_patient
 import json
 import os
 from werkzeug.utils import secure_filename
+from datetime import datetime
+import base64
 
 bp = Blueprint('ui', __name__)
+
 
 @bp.route("/", methods=["GET", "POST"])
 def home():
@@ -50,6 +53,7 @@ def home():
 
     return render_template("index.html", all_data=all_data, total_count=total_count)
 
+
 @bp.route('/patient/<patient_id>', methods=['GET'])
 def patient_analysis(patient_id):
     patient_data = get_analysis_by_patient(patient_id)
@@ -58,6 +62,7 @@ def patient_analysis(patient_id):
         return jsonify(patient_data)
 
     return render_template("patient.html", patient_data=patient_data, patient_id=patient_id)
+
 
 @bp.route('/api/analysis', methods=['POST'])
 def api_analysis():
@@ -80,6 +85,7 @@ def api_analysis():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @bp.route('/api/upload', methods=['POST'])
 def api_upload():
@@ -112,6 +118,7 @@ def api_upload():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @bp.route('/api/assistant', methods=['POST'])
 def api_assistant():
     """API endpoint for general AI assistant."""
@@ -124,5 +131,100 @@ def api_assistant():
         if 'error' in assistant_response:
             return jsonify({'error': assistant_response['error']}), 500
         return jsonify({'answer': assistant_response['answer']})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/api/imaging-analysis', methods=['POST'])
+def api_imaging_analysis():
+    """API endpoint for medical imaging analysis."""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        # Validate file type
+        allowed_extensions = {'.jpg', '.jpeg', '.png', '.tiff', '.tif', '.dcm', '.pdf'}
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        if file_ext not in allowed_extensions:
+            return jsonify({'error': f'Unsupported file type: {file_ext}'}), 400
+
+        # Save file temporarily
+        filename = secure_filename(file.filename)
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_folder, exist_ok=True)
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+
+        try:
+            # Use real AI analysis for image files
+            if file_ext in {'.jpg', '.jpeg', '.png', '.tiff', '.tif'}:
+                analysis_result = analyze_medical_image(filepath)
+            else:
+                # For PDF and DICOM files, return a message about format support
+                analysis_result = {
+                    'analysis': f'Файл {filename} загружен успешно. Анализ файлов формата {file_ext.upper()} находится в разработке. Пожалуйста, загрузите изображение в формате JPEG, PNG или TIFF.',
+                    'filename': filename,
+                    'file_size': os.path.getsize(filepath),
+                    'analysis_timestamp': datetime.now().isoformat()
+                }
+
+            if 'error' in analysis_result:
+                return jsonify({'error': analysis_result['error']}), 500
+
+            return jsonify(analysis_result)
+
+        except Exception as e:
+            return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
+        finally:
+            # Clean up temporary file
+            try:
+                os.remove(filepath)
+            except:
+                pass
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/api/save-imaging-analysis', methods=['POST'])
+def api_save_imaging_analysis():
+    """API endpoint to save imaging analysis results to database."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        # Extract data
+        filename = data.get('filename', 'Unknown')
+        analysis = data.get('analysis', '')
+        file_size = data.get('file_size', 0)
+        analysis_timestamp = data.get('analysis_timestamp', datetime.now().isoformat())
+
+        # Create a medical result entry for imaging analysis
+        imaging_result = {
+            "patient_id": f"imaging_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "analysis_type": "Медицинская визуализация",
+            "test_name": f"Анализ снимка: {filename}",
+            "value": "Анализ завершен",
+            "unit": "текст",
+            "reference_range": "Норма",
+            "status": "normal",
+            "priority": "medium",
+            "recommendations": analysis
+        }
+
+        # Insert into database
+        count = insert_medical_data([imaging_result])
+
+        return jsonify({
+            'success': True,
+            'inserted_count': count,
+            'message': f'Анализ снимка {filename} сохранен в базу данных'
+        })
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
